@@ -7,7 +7,8 @@ Railway project: `55ef0045-dc4a-468d-98e1-84edf2dafcae`, swyx's Projects.
 
 Use Google login. Admission allows exactly the configured owner email and
 `ai.engineer`, `latent.space`, `smol.ai`; recipients can sign using their document
-links without sender accounts. Native organization invitations assign membership.
+links without sender accounts. Verified Google accounts automatically join their
+domain's organization as members. Invitations remain available for exceptions.
 The server operator can access stored documents; keep sensitive documents scoped
 to their intended organization. This instance uses a self-signed sealing certificate.
 
@@ -21,6 +22,16 @@ Required policy variables:
 `NEXT_PRIVATE_ALLOWED_SIGNUP_EMAILS=shawnthe1@gmail.com`.
 An empty policy denies all sender accounts. Sign-in, sessions and sender API
 guards enforce admission independently of the website's tools password.
+
+`NEXT_PRIVATE_DOMAIN_ORGANISATIONS` maps exact domains to native organization IDs:
+`{"ai.engineer":"org_vvhusfyebfaykvmk","latent.space":"org_crzkzfsakkuzoure","smol.ai":"org_zarlbakfcmiaaksy"}`.
+Every Google sign-in enrolls a verified matching identity and opens that team's
+documents when no other destination was requested. Existing roles are retained;
+new accounts receive Member access only. Repeated/concurrent sign-ins do not
+duplicate membership. The exact Gmail owner exception keeps its existing team
+selection. Disable a user to revoke domain enrollment and sender access; removing
+membership alone permits that user to rejoin at their next Google sign-in.
+Domain enrollment is for this billing-disabled Community Edition deployment.
 
 Store session/encryption secrets and the password-protected PKCS#12 certificate
 outside Git. Preserve them across redeploys. Use

@@ -5,6 +5,7 @@ import {
   isSignupEnabledForProvider,
 } from '@documenso/lib/constants/auth';
 import { AppError, AppErrorCode } from '@documenso/lib/errors/app-error';
+import { joinDomainOrganisation } from '@documenso/lib/server-only/organisation/join-domain-organisation';
 import { getEmailBlocklistDomains } from '@documenso/lib/server-only/site-settings/get-email-blocklist-domains';
 import { onCreateUserHook } from '@documenso/lib/server-only/user/create-user';
 import { deletedServiceAccountEmail } from '@documenso/lib/server-only/user/service-accounts/deleted-account';
@@ -40,6 +41,22 @@ export const handleOAuthCallbackUrl = async (options: HandleOAuthCallbackUrlOpti
     return c.text('FORBIDDEN', 403);
   }
 
+  if (!isEmailDomainAllowedForSignup(email)) {
+    return c.text('FORBIDDEN', 403);
+  }
+
+  const authorizeAndRedirect = async (userId: number) => {
+    const teamUrl =
+      clientOptions.id === 'google' ? await joinDomainOrganisation({ userId, verifiedEmail: email }) : undefined;
+
+    await onAuthorize({ userId }, c);
+
+    const destination =
+      redirectPath === formatPath('/') && teamUrl ? formatPath(`/t/${teamUrl}/documents`) : redirectPath;
+
+    return c.redirect(destination, 302);
+  };
+
   // Find the account if possible.
   const existingAccount = await prisma.account.findFirst({
     where: {
@@ -57,9 +74,7 @@ export const handleOAuthCallbackUrl = async (options: HandleOAuthCallbackUrlOpti
 
   // Directly log in user if account already exists.
   if (existingAccount) {
-    await onAuthorize({ userId: existingAccount.user.id }, c);
-
-    return c.redirect(redirectPath, 302);
+    return authorizeAndRedirect(existingAccount.user.id);
   }
 
   const userWithSameEmail = await prisma.user.findFirst({
@@ -114,9 +129,7 @@ export const handleOAuthCallbackUrl = async (options: HandleOAuthCallbackUrlOpti
       }
     });
 
-    await onAuthorize({ userId: userWithSameEmail.id }, c);
-
-    return c.redirect(redirectPath, 302);
+    return authorizeAndRedirect(userWithSameEmail.id);
   }
 
   // Check if signups are disabled for this provider.
@@ -179,9 +192,7 @@ export const handleOAuthCallbackUrl = async (options: HandleOAuthCallbackUrlOpti
     console.error(err);
   });
 
-  await onAuthorize({ userId: createdUser.id }, c);
-
-  return c.redirect(redirectPath, 302);
+  return authorizeAndRedirect(createdUser.id);
 };
 
 export const validateOauth = async (options: HandleOAuthCallbackUrlOptions) => {
