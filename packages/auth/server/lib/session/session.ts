@@ -1,3 +1,4 @@
+import { isEmailDomainAllowedForSignup } from '@documenso/lib/constants/auth';
 import { AppError, AppErrorCode } from '@documenso/lib/errors/app-error';
 import type { RequestMetadata } from '@documenso/lib/universal/extract-request-metadata';
 import { prisma } from '@documenso/prisma';
@@ -97,6 +98,11 @@ export const validateSessionToken = async (token: string): Promise<SessionValida
   }
 
   const { user, ...session } = result;
+
+  if (user.disabled || !user.emailVerified || !isEmailDomainAllowedForSignup(user.email)) {
+    await prisma.session.delete({ where: { id: sessionId } });
+    return { session: null, user: null, isAuthenticated: false };
+  }
 
   if (Date.now() >= session.expiresAt.getTime()) {
     await prisma.session.delete({ where: { id: sessionId } });

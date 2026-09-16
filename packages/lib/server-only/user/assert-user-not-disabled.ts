@@ -1,5 +1,6 @@
 import { prisma } from '@documenso/prisma';
 
+import { isEmailDomainAllowedForSignup } from '../../constants/auth';
 import { AppError, AppErrorCode } from '../../errors/app-error';
 
 /**
@@ -9,10 +10,17 @@ import { AppError, AppErrorCode } from '../../errors/app-error';
  * been loaded (e.g. TRPC middleware where the user comes from the session
  * query or API token lookup).
  */
-export const assertUserNotDisabled = (user: { disabled: boolean }): void => {
+export const assertUserNotDisabled = (user: { disabled: boolean; email: string }): void => {
   if (user.disabled) {
     throw new AppError('ACCOUNT_DISABLED', {
       message: 'Account disabled',
+      statusCode: 403,
+    });
+  }
+
+  if (!isEmailDomainAllowedForSignup(user.email)) {
+    throw new AppError(AppErrorCode.UNAUTHORIZED, {
+      message: 'This signing instance is restricted to swyx and approved teams.',
       statusCode: 403,
     });
   }
@@ -34,7 +42,7 @@ export type AssertUserNotDisabledByIdOptions = {
 export const assertUserNotDisabledById = async ({ userId }: AssertUserNotDisabledByIdOptions): Promise<void> => {
   const user = await prisma.user.findFirst({
     where: { id: userId },
-    select: { disabled: true },
+    select: { disabled: true, email: true },
   });
 
   if (!user) {

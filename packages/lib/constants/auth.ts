@@ -1,6 +1,7 @@
 import MailChecker from 'mailchecker';
 
 import { env } from '../utils/env';
+import { isAllowedInstanceSender } from '../utils/instance-sender-policy';
 import { NEXT_PUBLIC_WEBAPP_URL } from './app';
 
 export const SALT_ROUNDS = 12;
@@ -80,7 +81,7 @@ export const getCookieDomain = () => {
 
 /**
  * Get allowed signup domains from env var.
- * Returns empty array if not set (meaning all domains allowed).
+ * Returns an empty array if not configured.
  */
 export const getAllowedSignupDomains = (): string[] => {
   const domains = env('NEXT_PRIVATE_ALLOWED_SIGNUP_DOMAINS');
@@ -97,22 +98,14 @@ export const getAllowedSignupDomains = (): string[] => {
 
 /**
  * Check if email domain is allowed for signup.
- * Returns true if no domain restriction is configured.
+ * This instance denies sender admission unless a domain or exact email is configured.
  */
 export const isEmailDomainAllowedForSignup = (email: string): boolean => {
-  const allowedDomains = getAllowedSignupDomains();
-
-  if (allowedDomains.length === 0) {
-    return true;
-  }
-
-  const emailDomain = email.toLowerCase().split('@').pop();
-
-  if (!emailDomain) {
-    return false;
-  }
-
-  return allowedDomains.includes(emailDomain);
+  return isAllowedInstanceSender(
+    email,
+    env('NEXT_PRIVATE_ALLOWED_SIGNUP_DOMAINS') || '',
+    env('NEXT_PRIVATE_ALLOWED_SIGNUP_EMAILS') || '',
+  );
 };
 
 /**

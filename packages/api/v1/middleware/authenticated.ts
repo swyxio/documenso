@@ -1,5 +1,6 @@
 import { AppError, AppErrorCode } from '@documenso/lib/errors/app-error';
 import { getApiTokenByToken } from '@documenso/lib/server-only/public-api/get-api-token-by-token';
+import { assertUserNotDisabled } from '@documenso/lib/server-only/user/assert-user-not-disabled';
 import type { BaseApiLog, RootApiLog } from '@documenso/lib/types/api-logs';
 import type { ApiRequestMetadata } from '@documenso/lib/universal/extract-request-metadata';
 import { extractRequestMetadata } from '@documenso/lib/universal/extract-request-metadata';
@@ -62,11 +63,7 @@ export const authenticatedMiddleware = <
 
       const apiToken = await getApiTokenByToken({ token });
 
-      if (apiToken.user.disabled) {
-        throw new AppError(AppErrorCode.UNAUTHORIZED, {
-          message: 'User is disabled',
-        });
-      }
+      assertUserNotDisabled(apiToken.user);
 
       apiLogger.info({
         ...infoToLog,

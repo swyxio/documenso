@@ -1,3 +1,7 @@
+## sign.swyx.io deployment
+
+This public fork powers sign.swyx.io for swyx, AI Engineer, Latent Space and Smol. Based on v2.18.0, with instance sender admission and persistent signing configuration. See [operations](infra/railway/README.md). Source of our modified instance is available here under AGPL-3.0.
+
 <img src="https://github.com/documenso/documenso/assets/13398220/a643571f-0239-46a6-a73e-6bef38d1228b" alt="Documenso Logo">
 
 <p align="center" style="margin-top: 20px">
