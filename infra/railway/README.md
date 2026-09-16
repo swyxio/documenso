@@ -1,4 +1,9 @@
-# sign.swyx.io
+# Former sign.swyx.io instance
+
+Retired 2026-09-16. All four deployments (web, backup, Redis and Postgres) were stopped. Railway accepted deletion of project `55ef0045-dc4a-468d-98e1-84edf2dafcae`, scheduled for `2026-09-18T18:52:31.376Z`. `sign.swyx.io` now redirects through Cloudflare to [native Drive signing](https://drive.swyx.io/sign). Do not redeploy this instance. The configuration below is historical recovery documentation.
+
+All six envelopes were explicitly TEST ONLY. Five team documents and seven PDF versions, including both completed seals and their unsigned originals, were copied into the corresponding Papra spaces without re-sealing. The personal draft remains operator-only. The 211,933-byte PostgreSQL dump passed an actual temporary restoration; it and all eight source PDFs were archived to private `papra-drive-backups/retired/documenso/2026-09-16/` with complete SHA-256 readbacks. Recovery keys/certificate remain owner-only at `~/.config/documenso-sign`. The public source fork is retained.
+
 
 Self-hosted Documenso for swyx, AI Engineer, Latent Space and Smol.
 Upstream release: v2.18.0 (`389390c884949fe27c240488a3259da3cdba93e0`).

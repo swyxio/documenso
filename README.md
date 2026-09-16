@@ -1,6 +1,6 @@
-## sign.swyx.io deployment
+## Former sign.swyx.io instance — retired 2026-09-16
 
-This public fork powers sign.swyx.io for swyx, AI Engineer, Latent Space and Smol. Based on v2.18.0, with instance sender admission and persistent signing configuration. See [operations](infra/railway/README.md). Source of our modified instance is available here under AGPL-3.0.
+Native signing now lives in [swyx Drive](https://drive.swyx.io/sign), maintained in [the Papra fork](https://github.com/swyxio/papra). The Railway instance is stopped and scheduled for project removal on 2026-09-18. Team PDF versions were preserved in Papra; a verified private database/object recovery archive is retained. This public v2.18.0 fork remains the AGPL-3.0 source for our former modified instance. See [historical operations and retirement](infra/railway/README.md).
 
 <img src="https://github.com/documenso/documenso/assets/13398220/a643571f-0239-46a6-a73e-6bef38d1228b" alt="Documenso Logo">
 
