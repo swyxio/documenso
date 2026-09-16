@@ -135,7 +135,13 @@ export default function SignIn({ loaderData }: Route.ComponentProps) {
         </h1>
 
         <p className="mt-2 text-muted-foreground text-sm">
-          <Trans>Welcome back, we are lucky to have you.</Trans>
+          Sign documents for swyx, AI Engineer, Latent Space and Smol. Use your approved Google account.
+        </p>
+        <p className="mt-2 text-muted-foreground text-xs">
+          External recipients can sign through their document links.{' '}
+          <a href="https://github.com/swyxio/documenso" className="underline">
+            Instance source (AGPL-3.0)
+          </a>
         </p>
         <hr className="-mx-6 my-4" />
 

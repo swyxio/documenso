@@ -42,3 +42,11 @@ the matching database/object data and keys.
 
 Community Edition and our changes are AGPL-3.0. Source is publicly available;
 retain upstream notices and do not enable unlicensed enterprise capabilities.
+
+## Backups
+
+PostgreSQL and Redis volumes use native daily (6 days), weekly (27 days), and monthly (89 days) backups. Redis additionally uses AOF with every-second fsync.
+
+The separate `documenso-backup` service runs at 10:00 UTC daily. Its Dockerfile and script are in `backup/`. It creates a compressed transactional database dump and copies private document objects into the private `backups` bucket. A manifest, written last, records sizes and SHA-256 hashes; snapshots without manifests are incomplete. Snapshots are retained until an operator removes them. Restore the database dump and objects from the same snapshot with the retained encryption keys and sealing certificate. These backups are in the same Railway workspace; retain an offline copy for provider loss.
+
+Deploy the backup service with `railway up infra/railway/backup --path-as-root --service documenso-backup --detach`. Configure its cron to `0 10 * * *`, restart policy Never, and use separate bucket-scoped documents and backups S3 credentials. Credentials remain outside Git. A backup exceeding 1GB compressed database size fails and needs operator intervention.
