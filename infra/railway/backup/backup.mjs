@@ -17,7 +17,8 @@ async function store(key, body) {
   await backups.send(new PutObjectCommand({ Bucket: process.env.BACKUPS_BUCKET, Key: `${snapshot}/${key}`, Body: body }));
   return { key, size: body.length, sha256: hash(body) };
 }
-const dump = spawn('pg_dump', ['--no-owner', '--no-acl'], { env: { ...process.env, PGDATABASE: process.env.DATABASE_URL }, stdio: ['ignore', 'pipe', 'pipe'] });
+const database = new URL(process.env.DATABASE_URL);
+const dump = spawn('pg_dump', ['--no-owner', '--no-acl'], { env: { ...process.env, PGHOST: database.hostname, PGPORT: database.port || '5432', PGUSER: decodeURIComponent(database.username), PGPASSWORD: decodeURIComponent(database.password), PGDATABASE: database.pathname.slice(1), PGSSLMODE: database.searchParams.get('sslmode') || 'prefer' }, stdio: ['ignore', 'pipe', 'pipe'] });
 dump.stderr.resume();
 const completed = new Promise((resolve, reject) => {
   dump.on('error', reject);
