@@ -28,14 +28,14 @@ Instance: https://sign.swyx.io. Upstream v2.18.0, pinned release `389390c884949f
 - OpenSSL CMS verification succeeded against the PDF's complete signed byte ranges. Embedded certificate fingerprint matches the retained sealing certificate: `51:29:22:8B:13:EB:E9:54:F6:60:DC:56:6B:57:D8:13:23:84:A9:DD:D2:75:6F:5E:B5:94:03:DD:2F:23:54:8B`.
 - Web service restarted without rebuilding. Owner session, completed document, and signed PDF remained available.
 - Redis AOF and every-second fsync verified at runtime. Daily/weekly/monthly native backups configured for Postgres and Redis; initial native backup records read back.
-- The explicitly requested teammate received a separate synthetic signing request. The application recorded SENT at 09:28:07 UTC; signing remained pending at verification. Recipient inbox delivery and teammate Google sign-in are not claimed verified.
+- A separate synthetic signing request was sent to the explicitly requested teammate. The application recorded SENT at 09:28:07 UTC; signing remained pending at verification. Recipient inbox delivery and teammate Google sign-in are not claimed verified.
 
 ## Backups
 
 - Daily backup cron: 10:00 UTC. Complete private snapshot `snapshots/2026-09-16T09:29:34.782Z`, compressed database 37,030 bytes, three document objects.
 - Every database/object checksum verified against the completed manifest. Object bytes also matched live document storage; the sealed test PDF is included. Anonymous object requests returned 403.
 - Matching database and document snapshot copied to the owner-only local recovery directory. The sealing certificate, session/encryption secrets and bucket credentials are retained outside Git.
-- Database dump restored into the separate disposable `sign_restore_test_20260916` database with SQL errors treated as failures. The disposable database is removed after verification.
+- Database dump restored into the separate disposable `sign_restore_test_20260916` database with SQL errors treated as failures. The restored snapshot contained one COMPLETED and one PENDING envelope. The disposable database was removed after verification.
 
 ## Limits
 
